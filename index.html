@@ -8,32 +8,35 @@
 <title>Linan Tasa № 0001</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:#07060c;color:#d9dbe6;overscroll-behavior:none;
+html,body{margin:0;height:100%;background:#07060c;color:#d9dbe6;overscroll-behavior:none;touch-action:none;overflow:hidden;
 -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
 font:15px/1.45 Georgia,"Times New Roman",serif}
 #app{position:fixed;inset:0;max-width:30rem;margin:0 auto;display:flex;flex-direction:column;
 padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 #hud{display:flex;justify-content:space-between;padding:.45rem .9rem;font-size:.66rem;letter-spacing:.26em;color:#8f86b8}
-#cv{display:block;width:100%;aspect-ratio:1/1;background:#07060c}
-#box{margin:.5rem .7rem 0;border:1px solid #4a4468;border-radius:2px;min-height:6.8rem;padding:.6rem .8rem;position:relative;
+#cv{display:block;width:min(100%,calc(100vh - 21.5rem));width:min(100%,calc(100dvh - 21.5rem));margin:0 auto;aspect-ratio:1/1;background:#07060c;touch-action:none}
+#box{margin:.5rem .7rem 0;border:1px solid #4a4468;border-radius:2px;min-height:8.2rem;padding:.6rem .8rem;position:relative;
 box-shadow:0 0 0 3px #07060c,0 0 0 4px #2a2640}
 #txt{font-size:1rem;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere;font-style:italic}
 #txt.him{color:#c9b8ff}
+#txt.hint{font-style:normal;font-size:.64rem;letter-spacing:.26em;color:#6f6893;text-transform:uppercase;padding-top:.1rem}
+#txt.hint b{font-weight:400;color:#b79cff;border:1px solid #6a5fa0;border-radius:50%;padding:.1rem .38rem;margin-right:.5rem;letter-spacing:0}
 #txt.carve{font-style:normal;letter-spacing:.16em;font-size:.82rem;color:#b79cff;line-height:1.6}
 #txt.mark{font-style:normal;font-size:.92rem;color:#f0c9dc}
-#more{position:absolute;right:.6rem;bottom:.25rem;font-size:.6rem;color:#8f86b8;animation:bl 1.4s ease-in-out infinite;visibility:hidden}
+#more{position:absolute;right:.7rem;bottom:.55rem;width:6px;height:6px;background:#8f86b8;transform:rotate(45deg);animation:bl 1.4s ease-in-out infinite;visibility:hidden}
 @keyframes bl{50%{opacity:.15}}
 #choice{display:none;grid-template-columns:1fr 1fr;gap:.45rem;margin-top:.55rem}
 button{font:inherit;color:#d9dbe6;background:#07060c;border:1px solid #6a5fa0;border-radius:2px}
 #choice button{font-size:.72rem;letter-spacing:.14em;padding:.65rem .2rem;min-width:0}
 button:active{background:#b79cff;color:#07060c}
 #pad{flex:1;display:flex;justify-content:space-between;align-items:center;padding:0 1.3rem;min-height:8.6rem}
-#dpad{width:132px;height:132px;position:relative;touch-action:none}
-#dpad i{position:absolute;width:44px;height:44px;border:1px solid #6a5fa0;display:grid;place-items:center;font-style:normal;font-size:.7rem;color:#8f86b8}
-#dpad i.on{background:#b79cff;color:#07060c}
-#dpad .u{left:44px;top:0}#dpad .d{left:44px;top:88px}#dpad .l{left:0;top:44px}#dpad .r{left:88px;top:44px}
-#sw{width:62px;height:62px;border-radius:50%;font-size:.56rem;letter-spacing:.14em;line-height:1.5;touch-action:none;visibility:hidden}
-#sw b{display:block;font-size:1rem;font-weight:400}
+#dpad{width:132px;height:132px;position:relative;touch-action:none;border:1px solid #4a4468;border-radius:50%}
+#dpad::before{content:"";position:absolute;inset:14px;border:1px dashed #2a2640;border-radius:50%}
+#dpad i{position:absolute;width:3px;height:3px;border-radius:50%;background:#6a5fa0}
+#dpad .u{left:64px;top:6px}#dpad .d{left:64px;bottom:6px}#dpad .l{left:6px;top:64px}#dpad .r{right:6px;top:64px}
+#knob{position:absolute;left:39px;top:39px;width:52px;height:52px;border-radius:50%;border:1px solid #b79cff;background:#120e26;box-shadow:0 0 14px #7a5cff55;transition:transform .07s ease-out}
+#sw{width:66px;height:66px;border-radius:50%;font-size:.5rem;letter-spacing:.16em;line-height:1.7;touch-action:none;visibility:hidden;color:#8f86b8}
+#sw span{display:block;font-size:.74rem;letter-spacing:.2em;color:#d9dbe6}
 #a{width:82px;height:82px;border-radius:50%;font-size:1.1rem;letter-spacing:.1em;touch-action:none;border-color:#b79cff}
 .ov{position:absolute;inset:0;background:#07060c;display:none;flex-direction:column;align-items:center;justify-content:center;padding:1.2rem;z-index:5;overflow-y:auto}
 .ov.on{display:flex}
@@ -50,7 +53,8 @@ button:active{background:#b79cff;color:#07060c}
 #tray button.on{border-color:#b79cff;background:#191530}
 #tray canvas{width:36px;height:36px}
 #ftools{display:flex;gap:.35rem}
-#ftools button{width:42px;height:38px;font-size:1rem}
+#ftools button{width:42px;height:38px;padding:0;display:grid;place-items:center}
+#ftools svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 #ftools #fdone{width:auto;padding:0 .9rem;letter-spacing:.24em;font-size:.72rem;border-color:#b79cff}
 #fhint,#ehint{min-height:2.6em;font-size:.68rem;letter-spacing:.14em;color:#8f86b8;margin:.5rem 0 0;font-style:normal;text-align:center;max-width:20rem}
 #endlines p{font-size:.84rem;color:#b9b3d6}
@@ -58,12 +62,12 @@ button:active{background:#b79cff;color:#07060c}
 </head>
 <body>
 <div id="app">
-  <div id="hud"><span>LINAN TASA № 0001</span><span id="pts"></span></div>
+  <div id="hud"><span id="where">LINAN TASA № 0001</span><span id="pts"></span></div>
   <canvas id="cv"></canvas>
-  <div id="box"><div id="txt"></div><div id="choice"></div><div id="more">◆</div></div>
+  <div id="box"><div id="txt"></div><div id="choice"></div><div id="more"></div></div>
   <div id="pad">
-    <div id="dpad"><i class="u">▲</i><i class="l">◀</i><i class="r">▶</i><i class="d">▼</i></div>
-    <button id="sw"><b>⇄</b><span id="swl"></span></button>
+    <div id="dpad"><i class="u"></i><i class="l"></i><i class="r"></i><i class="d"></i><div id="knob"></div></div>
+    <button id="sw">PLAY AS<span id="swl"></span></button>
     <button id="a">A</button>
   </div>
 
@@ -73,14 +77,14 @@ button:active{background:#b79cff;color:#07060c}
     <p>No case tonight.</p><p>Tonight the mirror is open.</p>
     <button class="go" id="go">ENTER</button>
     <button class="lnk" id="reset" hidden>START OVER</button>
-    <div class="small">MOVE: ARROWS · TOUCH / READ: A · SWITCH: ⇄<br>PLAY WITH SOUND ON</div>
+    <div class="small">MOVE WITH THE STICK · TOUCH AND READ WITH A<br>PLAY WITH SOUND ON</div>
   </div>
 
   <div class="ov" id="forge">
     <h2 id="ftitle"></h2>
     <canvas id="fcv"></canvas>
     <div id="tray"></div>
-    <div id="ftools"><button data-k="l">⟲</button><button data-k="r">⟳</button><button data-k="m">−</button><button data-k="p">+</button><button data-k="x">✕</button><button id="fdone">FORGE</button></div>
+    <div id="ftools"><button data-k="l" aria-label="turn left"><svg viewBox="0 0 20 20"><path d="M5 10a5.5 5.5 0 1 0 2-4.2"/><path d="M4 3.5v3.3h3.3"/></svg></button><button data-k="r" aria-label="turn right"><svg viewBox="0 0 20 20"><path d="M15 10a5.5 5.5 0 1 1-2-4.2"/><path d="M16 3.5v3.3h-3.3"/></svg></button><button data-k="m" aria-label="smaller"><svg viewBox="0 0 20 20"><path d="M5 10h10"/></svg></button><button data-k="p" aria-label="bigger"><svg viewBox="0 0 20 20"><path d="M5 10h10M10 5v10"/></svg></button><button data-k="x" aria-label="remove"><svg viewBox="0 0 20 20"><path d="M5.5 5.5l9 9M14.5 5.5l-9 9"/></svg></button><button id="fdone">FORGE</button></div>
     <div id="fhint"></div>
   </div>
 
@@ -98,6 +102,7 @@ button:active{background:#b79cff;color:#07060c}
     <h1>TWO SEALS, ONE MARK</h1><h2>LINAN TASA № 0001</h2>
     <div id="endlines"></div>
     <button class="go" id="save">KEEP THE SEAL</button>
+    <button class="lnk" id="again">BEGIN AGAIN</button>
     <div class="small">NOT ONE LINE IN THIS GAME WAS WRITTEN FOR PAIMON. ON PURPOSE.</div>
   </div>
 </div>
@@ -267,7 +272,8 @@ const ORDER = ['nine', 'earth', 'gal', 'enn', 'moon'];
 const nDone = () => ORDER.filter(k => ST.done[k]).length;
 function save() { try { localStorage.setItem('lt0001b', JSON.stringify(ST)); } catch (e) {} }
 function load() { try { const s = JSON.parse(localStorage.getItem('lt0001b')); if (s && s.ch) { ST = Object.assign(FRESH(), s); pl = ST.ch[ST.cur]; return true; } } catch (e) {} return false; }
-function hud() { $('#pts').textContent = pl.scene === 'room' ? '' : (ST.him ? NAME[ST.cur] + ' · ' : '') + '✦ ' + nDone() + '/5';
+const WHERE = { room: 'HER ROOM', hub: 'THE FIVE DOORS', nine: 'HALL OF NINE', moon: 'MOON FORGE', earth: 'EARTH FORGE', enn: 'CHAMBER OF THE ENN', gal: 'GALLERY OF NAMES', stars: 'THE SIXTH DOOR', fin: 'THE CIRCLE' };
+function hud() { $('#where').textContent = WHERE[pl.scene]; $('#pts').textContent = pl.scene === 'room' ? '' : (ST.him ? NAME[ST.cur] + ' · ' : '') + 'LIT ' + nDone() + '/5';
   $('#sw').style.visibility = ST.him ? 'visible' : 'hidden'; $('#swl').textContent = NAME[ST.cur === 'her' ? 'him' : 'her']; }
 
 /* ================= sound ================= */
@@ -422,7 +428,8 @@ const S = {
       this.tabs.forEach(tb => tablet(c, tb.x, tb.y, ST.cur === 'her'));
       lamp(c, LAMPS[0] - 8, LAMPS[1], ST.f.lampA, t, 1); lamp(c, LAMPS[0] + 8, LAMPS[1], ST.f.lampB, t, 2);
       if (ST.f.sixth) { const [x, y] = pol(90, RR - 2); c.save(); c.shadowColor = '#fff'; c.shadowBlur = 12; arch(c, x, y, 90, '#fff'); c.restore(); c.fillStyle = '#fff'; for (let i = 0; i < 7; i++) c.fillRect(x - 7 + hsh(i, 1) * 14, y - 12 + hsh(i, 2) * 16 + Math.sin(t / 400 + i), 1, 1); }
-      if (ST.cur === 'him') { c.save(); c.setLineDash([2, 4]); c.strokeStyle = LAV; c.globalAlpha = .5; ln(c, TILE.her[0], TILE.her[1], TILE.him[0], TILE.him[1]); c.restore(); } },
+      if (ST.cur === 'him') { c.save(); c.setLineDash([2, 4]); c.strokeStyle = LAV; c.globalAlpha = .5; ln(c, TILE.her[0], TILE.her[1], TILE.him[0], TILE.him[1]); c.restore(); }
+      if (stillT > 0) { c.save(); c.strokeStyle = '#fff'; c.shadowColor = '#fff'; c.shadowBlur = 10; c.lineWidth = 1.4; c.globalAlpha = .7; c.beginPath(); c.arc(C, C, 36, -Math.PI / 2, -Math.PI / 2 + TAU * Math.min(1, stillT / 6000)); c.stroke(); c.restore(); } },
     ok: (x, y) => inC(x, y),
     hot() { return [{ id: 'seal', x: C, y: C, r: 30 }, ...DOORS.map(d => { const [x, y] = pol(d.a, RR - 20); return { id: d.k, x, y, r: 26 }; }), ...tabHot(this), { id: 'lamps', x: LAMPS[0], y: LAMPS[1] + 6, r: 24 },
       { id: 'tile', x: TILE[ST.cur][0], y: TILE[ST.cur][1], r: 13 }, ...(ST.f.sixth ? [{ id: 'sixth', x: pol(90, RR - 20)[0], y: pol(90, RR - 20)[1], r: 26 }] : [])]; },
@@ -618,12 +625,14 @@ $('#save').onclick = () => { const o = document.createElement('canvas'); o.width
   c.fillStyle = SIL; c.textAlign = 'center'; c.font = '84px Georgia,"Times New Roman",serif'; c.fillText('9.9.2029', 600, 1250); c.fillStyle = '#6f6893'; c.font = '30px Georgia,"Times New Roman",serif'; c.fillText('L I N A N   T A S A   №   0 0 0 1', 600, 1330);
   const a = document.createElement('a'); a.href = o.toDataURL('image/png'); a.download = 'linan-tasa-0001.png'; a.click(); };
 
+$('#again').onclick = () => { try { localStorage.removeItem('lt0001b'); } catch (e) {} location.reload(); };
+
 /* ================= forge UI ================= */
 let fg = null; const fc = fit($('#fcv'), 300);
 function openForge(who) { fg = { who, list: (ST.sig[who] || []).map(o => ({ ...o })), sel: -1 }; mode = 'ui'; $('#ftitle').textContent = who === 'moon' ? 'MOON FORGE · YOUR SEAL' : 'EARTH FORGE · HIS SEAL';
   $('#fhint').textContent = 'TOUCH A PIECE TO ADD IT. DRAG IT, TURN IT, SIZE IT. THE SEAL IS WHATEVER YOU MAKE.'; const tr = $('#tray'); tr.innerHTML = '';
   TRAY[who].forEach(p => { const b = document.createElement('button'), k = document.createElement('canvas'), c = fit(k, 36); b.dataset.p = p; c.translate(18, 18); c.scale(12, 12); c.lineWidth = 1.2 / 12; c.strokeStyle = SIL; PIECE[p](c); b.append(k);
-    b.onclick = () => { let i = fg.list.findIndex(o => o.p === p); if (i < 0) { const n = fg.list.length; fg.list.push({ p, x: (hsh(n, 4) - .5) * .5, y: (hsh(n, 6) - .5) * .5, rot: 0, sc: .34 }); i = n; chime(n); } fg.sel = i; drawForge(); }; tr.append(b); });
+    b.onclick = () => { let i = fg.list.findIndex(o => o.p === p); if (i < 0) { const n = fg.list.length; const an = n * 2.4, rd = n ? .2 + .5 * Math.sqrt(n / 13) : 0; fg.list.push({ p, x: Math.cos(an) * rd, y: Math.sin(an) * rd, rot: 0, sc: .3 }); i = n; chime(n); } fg.sel = i; drawForge(); }; tr.append(b); });
   $('#forge').classList.add('on'); drawForge(); }
 function drawForge() { const c = fc, who = fg.who; c.fillStyle = BG; c.fillRect(0, 0, 300, 300); stipple(c, 500, 5, r => { const a = r() * TAU, d = 132 + r() * 16; return [150 + Math.cos(a) * d, 150 + Math.sin(a) * d]; }, '#3a3558');
   c.strokeStyle = DIM; c.lineWidth = 1; ring(c, 150, 150, 130); ring(c, 150, 150, 124); c.strokeStyle = '#1d1a30'; star(c, 150, 150, 124);
@@ -642,7 +651,7 @@ $('#fdone').onclick = () => { if (fg.list.length < 3) { $('#fhint').textContent 
   if (first) say(TX[who + 'Done'], () => { if (who === 'moon') ST.items.push('taht'); pointLit(who); say(TX.point); }); };
 
 /* ================= enn UI ================= */
-const ec = fit($('#ecv'), 300), ER = [130, 100, 70, 40]; let eoff = [2, 5, 3, 1], eview = 'her';
+const ec = fit($('#ecv'), 300), ER = [130, 100, 70, 40]; let eoff = [2, 5, 3, 1], eview = 'her', etw = null;
 const GLY = [c => star(c, 0, 0, 5), c => { c.beginPath(); c.arc(0, 0, 3, 0, TAU); c.stroke(); }, c => poly(c, [[-5, 3], [-5, -3], [-2, 0], [0, -4], [2, 0], [5, -3], [5, 3]], true), c => { c.save(); c.scale(5, 5); c.lineWidth = .2; PIECE.crescent(c); c.restore(); }, c => poly(c, [[-4, -3], [4, -3], [0, 4]], true)];
 function openEnn() { mode = 'ui'; eview = ST.cur; $('#enn').classList.add('on'); drawEnn(); }
 function drawEnn() { const c = ec, her = eview === 'her', both = other().scene === 'enn' && ST.him; c.fillStyle = BG; c.fillRect(0, 0, 300, 300); c.lineWidth = 1; c.strokeStyle = DIM; ln(c, 150, 150, 4, 150); c.fillStyle = '#8f86b8'; c.font = '8px Georgia'; c.textAlign = 'left'; c.fillText('WEST', 4, 143);
@@ -650,29 +659,39 @@ function drawEnn() { const c = ec, her = eview === 'her', both = other().scene =
   $('#ehint').textContent = her ? 'YOU CAN READ THE WORDS. THE RINGS WILL NOT TURN FOR YOU.' : 'TOUCH A RING TO TURN IT. YOU CANNOT READ WHAT IS ON THEM.';
   $('#eswap').style.display = both ? '' : 'none'; $('#eswap').textContent = her ? 'HIS HANDS' : 'HER EYES';
   ER.forEach((r, i) => { const okk = eoff[i] % 6 === 0 && her; c.strokeStyle = okk ? LAV : DIM; ring(c, 150, 150, r + 14); if (i === 3) ring(c, 150, 150, r - 14);
-    for (let s = 0; s < 6; s++) { const a = Math.PI + (s + eoff[i]) * Math.PI / 3; c.save(); c.translate(150 + Math.cos(a) * r, 150 + Math.sin(a) * r); c.rotate(a - Math.PI);
+    const fr = etw && etw.i === i ? Math.max(0, 1 - (performance.now() - etw.t0) / 240) : 0;
+    for (let s = 0; s < 6; s++) { const a = Math.PI + (s + eoff[i] - fr * fr) * Math.PI / 3; c.save(); c.translate(150 + Math.cos(a) * r, 150 + Math.sin(a) * r); c.rotate(a - Math.PI);
       if (s === 0 && her) { c.fillStyle = okk ? '#fff' : SIL; c.font = (i === 3 ? 8 : 10) + 'px Georgia'; c.textAlign = 'center'; c.textBaseline = 'middle'; if (okk) { c.shadowColor = VIO; c.shadowBlur = 8; } c.fillText(ENN[i], 0, 0); }
       else { c.strokeStyle = her ? '#5a4f86' : '#8f86b8'; GLY[(s + i) % 5](c); } c.restore(); }
     if (!her) gear(c, 150 + Math.cos(.6 + i) * (r + 14), 150 + Math.sin(.6 + i) * (r + 14), 5, eoff[i]); }); }
 $('#ecv').addEventListener('pointerdown', e => { e.preventDefault(); const r = e.target.getBoundingClientRect(), d = Math.hypot((e.clientX - r.left) / r.width * 300 - 150, (e.clientY - r.top) / r.height * 300 - 150);
   if (d > 146) return; turnRing(d > 115 ? 0 : d > 85 ? 1 : d > 55 ? 2 : 3); });
 function turnRing(i) { if (eview === 'her') { thud(); $('#ehint').textContent = other().scene === 'enn' && ST.him ? 'THE RINGS WILL NOT MOVE FOR YOU. THEY NEED HIS HANDS.' : 'THE RINGS WILL NOT MOVE FOR YOU. HE IS NOT IN THIS ROOM.'; return; }
-  eoff[i] = (eoff[i] + 1) % 6; chime(i * 2, .07); noise(.25, .05, -500); const n = eoff.filter(o => o === 0).length; drawEnn();
+  eoff[i] = (eoff[i] + 1) % 6; chime(i * 2, .07); noise(.25, .05, -500); const n = eoff.filter(o => o === 0).length; etw = { i, t0: performance.now() };
+  (function tw() { drawEnn(); if (etw && performance.now() - etw.t0 < 260) requestAnimationFrame(tw); else { etw = null; drawEnn(); } })();
   if (n === 4) { chant(4, .05); setTimeout(() => { $('#enn').classList.remove('on'); mode = 'play'; chant(4, .03); say(TX.ennDone, () => { ST.f.scales = 1; burst(C, C, SIL, 40); pointLit('enn'); say(TX.point); }); }, 900); } }
 $('#eswap').onclick = () => { eview = eview === 'her' ? 'him' : 'her'; ST.cur = eview; pl = ST.ch[ST.cur]; hud(); chime(eview === 'her' ? 6 : 1, .05); drawEnn(); };
 $('#eback').onclick = () => { $('#enn').classList.remove('on'); mode = 'play'; chant(0); };
 
 /* ================= dialogue ================= */
 let mode = 'intro', queue = [], after = null, typing = null, full = '';
-function say(lines, cb) { queue = lines.slice(); after = cb || null; mode = 'dialog'; padOff(); next(); }
+function say(lines, cb) { queue = lines.slice(); after = cb || null; mode = 'dialog'; hintId = null; padOff(); next(); }
 function next() { const l = queue.shift();
   if (l === undefined) { $('#txt').textContent = ''; $('#more').style.visibility = 'hidden'; mode = 'play'; const cb = after; after = null; if (cb) cb(); return; }
   const o = typeof l === 'string' ? { l } : l; if (o.fx) FX[o.fx](); const text = o.c || o.m || o.l, el = $('#txt'); el.className = o.c ? 'carve' : o.m ? 'mark' : ST.cur === 'him' ? 'him' : ''; el.textContent = ''; $('#more').style.visibility = 'hidden';
   const chars = Array.from(text); full = text; let i = 0;
   typing = setInterval(() => { el.textContent += chars[i]; if (i % 3 === 0 && chars[i] !== ' ') tone(o.c ? 220 : ST.cur === 'him' ? 262 : 330, .05, .012); i++; if (i >= chars.length) done(); }, o.c ? 46 : 26); }
 function done() { clearInterval(typing); typing = null; $('#txt').textContent = full; $('#more').style.visibility = 'visible'; }
-function pick(q, labels, cb) { mode = 'choice'; $('#txt').className = ''; $('#txt').textContent = q; const ch = $('#choice'); ch.style.display = 'grid'; ch.innerHTML = '';
+function pick(q, labels, cb) { mode = 'choice'; hintId = null; $('#txt').className = ''; $('#txt').textContent = q; const ch = $('#choice'); ch.style.display = 'grid'; ch.innerHTML = '';
   labels.forEach((label, n) => { const b = document.createElement('button'); b.textContent = label; b.onclick = () => { ch.style.display = 'none'; $('#txt').textContent = ''; mode = 'play'; cb(n); }; ch.append(b); }); }
+
+/* ================= hints ================= */
+const LABEL = { window: 'the window', mirror: 'the mirror', desk: 'the desk', wardrobe: 'the wardrobe', bed: 'the bed', seal: 'the seal', nine: 'door · nine marks', earth: 'door · a triangle', gal: 'door · three arches',
+  enn: 'door · four rings', moon: 'door · a crescent', lamps: 'two small lamps', tile: 'a plate in the floor', sixth: 'the sixth door', stone: 'the centre stone', anvil: 'the anvil', cup: 'a silver cup',
+  soil: 'a bowl of earth', wheel: 'a wheel in the wall', rings: 'the rings', taht: 'an alcove', lir: 'an alcove', terazi: 'an alcove', altar: 'the altar', mark: 'your mark', exit: 'the way back' };
+let hintId = null;
+function hint(h) { const id = h ? h.id : ''; if (id === hintId) return; hintId = id; const el = $('#txt'); if (!h) { if (el.className === 'hint') { el.textContent = ''; el.className = ''; } return; }
+  const name = id.startsWith('tab') ? 'a carving' : id.startsWith('b') && id.length === 2 ? 'a bowl' : LABEL[id] || ''; el.className = 'hint'; el.innerHTML = '<b>A</b>' + name; }
 
 /* ================= scene switching ================= */
 const cache = {}; let trans = null;
@@ -688,20 +707,25 @@ function act() { if (mode === 'dialog') { typing ? done() : next(); return; } if
   if (h.id.startsWith('tab')) return readTab(S[pl.scene].tabs[+h.id.slice(3)]); S[pl.scene].use(h.id, ST.cur); }
 
 /* ================= input ================= */
-let dir = null, moving = false;
-const KEY = { ArrowUp: 'u', ArrowDown: 'd', ArrowLeft: 'l', ArrowRight: 'r', w: 'u', s: 'd', a: 'l', d: 'r' };
-addEventListener('keydown', e => { if (KEY[e.key]) { dir = KEY[e.key]; e.preventDefault(); } else if (['z', 'Enter', ' '].includes(e.key) && !e.repeat) { act(); e.preventDefault(); } else if (e.key === 'x' || e.key === 'Tab') { swap(); e.preventDefault(); } });
-addEventListener('keyup', e => { if (KEY[e.key] === dir) dir = null; });
-const dp = $('#dpad');
-function padDir(e) { const r = dp.getBoundingClientRect(), x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2; dir = Math.abs(x) > Math.abs(y) ? (x < 0 ? 'l' : 'r') : (y < 0 ? 'u' : 'd');
-  dp.querySelectorAll('i').forEach(i => i.classList.toggle('on', i.className.includes(dir))); }
-function padOff() { dir = null; dp.querySelectorAll('i').forEach(i => i.classList.remove('on')); }
-dp.addEventListener('pointerdown', e => { try { dp.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); padDir(e); });
-dp.addEventListener('pointermove', e => { if (dir) padDir(e); });
+let dir = null, vx = 0, vy = 0, moving = false;
+const KEY = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0] }, held = new Set();
+function setVec(x, y) { const m = Math.hypot(x, y); if (m < .01) { vx = vy = 0; dir = null; return; } vx = x / Math.max(1, m); vy = y / Math.max(1, m); dir = Math.abs(x) > Math.abs(y) ? (x < 0 ? 'l' : 'r') : (y < 0 ? 'u' : 'd'); }
+function keyVec() { let x = 0, y = 0; held.forEach(k => { x += KEY[k][0]; y += KEY[k][1]; }); const m = Math.hypot(x, y) || 1; setVec(x / m, y / m); }
+addEventListener('keydown', e => { if (KEY[e.key]) { held.add(e.key); keyVec(); e.preventDefault(); } else if (['z', 'Enter', ' '].includes(e.key) && !e.repeat) { act(); e.preventDefault(); } else if ((e.key === 'x' || e.key === 'Tab') && !e.repeat) { swap(); e.preventDefault(); } });
+addEventListener('keyup', e => { if (KEY[e.key]) { held.delete(e.key); keyVec(); } });
+const dp = $('#dpad'), knob = $('#knob'); let padOn = false;
+function padDir(e) { const r = dp.getBoundingClientRect(); let x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2; const m = Math.hypot(x, y), lim = 40; if (m > lim) { x *= lim / m; y *= lim / m; }
+  knob.style.transform = 'translate(' + x + 'px,' + y + 'px)'; if (m < 9) setVec(0, 0); else setVec(x / lim, y / lim); }
+function padOff() { padOn = false; held.clear(); setVec(0, 0); knob.style.transform = ''; }
+dp.addEventListener('pointerdown', e => { try { dp.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); padOn = true; padDir(e); });
+dp.addEventListener('pointermove', e => { if (padOn) padDir(e); });
 dp.addEventListener('pointerup', padOff); dp.addEventListener('pointercancel', padOff);
 $('#a').addEventListener('pointerdown', e => { e.preventDefault(); act(); });
 $('#sw').addEventListener('pointerdown', e => { e.preventDefault(); swap(); });
 $('#box').addEventListener('pointerdown', () => { if (mode === 'dialog') act(); });
+cv.addEventListener('pointerdown', e => { e.preventDefault(); if (mode === 'dialog' || mode === 'play') act(); });
+['gesturestart', 'dblclick', 'contextmenu'].forEach(n => document.addEventListener(n, e => e.preventDefault()));
+document.addEventListener('visibilitychange', () => { if (!ac) return; document.hidden ? ac.suspend() : ac.resume(); padOff(); });
 
 /* ================= frame ================= */
 const LOOK = { her: { col: '#15112b', trim: LAV }, him: { col: '#0c1014', trim: SIL } };
@@ -709,11 +733,12 @@ function drawChar(c, who, t) { const p = ST.ch[who], me = who === ST.cur; figure
   if (cine.stage) return; const hx = p.x + (p.dir === 'l' ? -11 : 11), hy = p.y - 15;
   if (who === 'her' && ST.candle) flame(c, hx, hy, t, 3, 0, .8);
   if (who === 'him') { c.save(); c.shadowColor = '#fff'; c.shadowBlur = 8; c.fillStyle = '#fff'; c.beginPath(); c.arc(hx, hy - 2, 1.8, 0, TAU); c.fill(); c.restore(); } }
-let t0 = 0;
+let t0 = 0, stepT = 0;
 function frame(t) {
   const sc = S[pl.scene]; g.drawImage(bg(pl.scene), 0, 0, L, L); g.lineCap = g.lineJoin = 'round';
   sc.dyn(g, t);
-  const h = mode === 'play' ? near() : null;
+  g.fillStyle = '#b79cff'; for (let i = 0; i < 46; i++) { const x = (hsh(i, 1) * L + Math.sin(t / 2600 + i) * 14 + t / (90 + i * 3)) % L, y = (hsh(i, 2) * L - t / (70 + i * 5) % L + L) % L; g.globalAlpha = .12 + .3 * Math.abs(Math.sin(t / 1700 + i * 2.1)); g.fillRect(x, y, 1.1, 1.1); } g.globalAlpha = 1;
+  const h = mode === 'play' ? near() : null; if (mode === 'play') hint(h);
   if (h) { g.save(); g.strokeStyle = ST.cur === 'her' ? LAV : SIL; g.globalAlpha = .5 + .3 * Math.sin(t / 250); g.setLineDash([1, 5]); g.lineWidth = 1.4; g.beginPath(); g.arc(h.x, h.y, 13 + Math.sin(t / 400) * 2, 0, TAU); g.stroke(); g.restore(); }
   const whos = ['her', 'him'].filter(w => (w === 'her' || ST.him) && ST.ch[w].scene === pl.scene);
   whos.sort((a, b) => ST.ch[a].y - ST.ch[b].y).forEach(w => drawChar(g, w, t));
@@ -735,8 +760,11 @@ function rules(dt) {
     if (stillT > 6000) { ST.f.listen = 1; save(); chant(4, .06); say(TX.listen, () => go('fin', 200, 312)); } } else if (stillT) { stillT = 0; chant(0); }
 }
 function loop(t) { const dt = Math.min(50, t - t0); t0 = t; moving = false;
-  if (mode === 'play' && dir) { pl.dir = dir; const sp = dt * .085, v = { u: [0, -sp], d: [0, sp], l: [-sp, 0], r: [sp, 0] }[dir], sc = S[pl.scene];
-    if (sc.ok(pl.x + v[0], pl.y + v[1])) { pl.x += v[0]; pl.y += v[1]; moving = true; } }
+  if (mode === 'play' && dir) { pl.dir = dir; const sp = dt * .092, dx = vx * sp, dy = vy * sp, sc = S[pl.scene];
+    if (sc.ok(pl.x + dx, pl.y + dy)) { pl.x += dx; pl.y += dy; moving = true; }
+    else if (dx && sc.ok(pl.x + dx, pl.y)) { pl.x += dx; moving = true; }
+    else if (dy && sc.ok(pl.x, pl.y + dy)) { pl.y += dy; moving = true; }
+    if (moving) { stepT += dt; if (stepT > 300) { stepT = 0; noise(.07, ST.cur === 'her' ? .018 : .026, ST.cur === 'her' ? -900 : -500); } } }
   rules(dt);
   if (mode !== 'end' && mode !== 'intro') frame(t); requestAnimationFrame(loop); }
 // the seal's "no trick" line arms the listening
