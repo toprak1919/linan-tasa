@@ -19,6 +19,8 @@ padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 box-shadow:0 0 0 3px #07060c,0 0 0 4px #2a2640}
 #txt{font-size:1rem;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere;font-style:italic}
 #txt.him{color:#c9b8ff}
+#txt.djinn{font-style:normal;color:#e6dcff;font-size:.97rem}
+#txt.djinn::before{content:"THE DJINN";display:block;font-size:.56rem;letter-spacing:.3em;color:#b79cff;margin-bottom:.15rem}
 #txt.hint{font-style:normal;font-size:.64rem;letter-spacing:.26em;color:#6f6893;text-transform:uppercase;padding-top:.1rem}
 #txt.hint b{font-weight:400;color:#b79cff;border:1px solid #6a5fa0;border-radius:50%;padding:.1rem .38rem;margin-right:.5rem;letter-spacing:0}
 #txt.carve{font-style:normal;letter-spacing:.16em;font-size:.82rem;color:#b79cff;line-height:1.6}
@@ -29,13 +31,18 @@ box-shadow:0 0 0 3px #07060c,0 0 0 4px #2a2640}
 button{font:inherit;color:#d9dbe6;background:#07060c;border:1px solid #6a5fa0;border-radius:2px}
 #choice button{font-size:.72rem;letter-spacing:.14em;padding:.65rem .2rem;min-width:0}
 button:active{background:#b79cff;color:#07060c}
-#pad{flex:1;display:flex;justify-content:space-between;align-items:center;padding:0 1.3rem;min-height:8.6rem}
+#pad{flex:1;display:flex;justify-content:space-between;align-items:center;padding:0 1.3rem;min-height:9rem}
 #dpad{width:132px;height:132px;position:relative;touch-action:none;border:1px solid #4a4468;border-radius:50%}
 #dpad::before{content:"";position:absolute;inset:14px;border:1px dashed #2a2640;border-radius:50%}
 #dpad i{position:absolute;width:3px;height:3px;border-radius:50%;background:#6a5fa0}
 #dpad .u{left:64px;top:6px}#dpad .d{left:64px;bottom:6px}#dpad .l{left:6px;top:64px}#dpad .r{right:6px;top:64px}
 #knob{position:absolute;left:39px;top:39px;width:52px;height:52px;border-radius:50%;border:1px solid #b79cff;background:#120e26;box-shadow:0 0 14px #7a5cff55;transition:transform .07s ease-out}
-#sw{width:66px;height:66px;border-radius:50%;font-size:.5rem;letter-spacing:.16em;line-height:1.7;touch-action:none;visibility:hidden;color:#8f86b8}
+#mid{display:flex;flex-direction:column;gap:.45rem;align-items:center}
+#ask{width:62px;height:62px;border-radius:50%;font-size:.5rem;letter-spacing:.16em;line-height:1.7;touch-action:none;color:#8f86b8;border-color:#b79cff}
+#ask span{display:block;font-size:.74rem;letter-spacing:.2em;color:#e6dcff}
+#sw.pulse{animation:pu 1s ease-in-out infinite}
+@keyframes pu{50%{box-shadow:0 0 18px #b79cff;border-color:#fff}}
+#sw{width:62px;height:62px;border-radius:50%;font-size:.5rem;letter-spacing:.16em;line-height:1.7;touch-action:none;visibility:hidden;color:#8f86b8}
 #sw span{display:block;font-size:.74rem;letter-spacing:.2em;color:#d9dbe6}
 #a{width:82px;height:82px;border-radius:50%;font-size:1.1rem;letter-spacing:.1em;touch-action:none;border-color:#b79cff}
 .ov{position:absolute;inset:0;background:#07060c;display:none;flex-direction:column;align-items:center;justify-content:center;padding:1.2rem;z-index:5;overflow-y:auto}
@@ -67,7 +74,7 @@ button:active{background:#b79cff;color:#07060c}
   <div id="box"><div id="txt"></div><div id="choice"></div><div id="more"></div></div>
   <div id="pad">
     <div id="dpad"><i class="u"></i><i class="l"></i><i class="r"></i><i class="d"></i><div id="knob"></div></div>
-    <button id="sw">PLAY AS<span id="swl"></span></button>
+    <div id="mid"><button id="ask">ASK<span>DJINN</span></button><button id="sw">PLAY AS<span id="swl"></span></button></div>
     <button id="a">A</button>
   </div>
 
@@ -77,7 +84,7 @@ button:active{background:#b79cff;color:#07060c}
     <p>No case tonight.</p><p>Tonight the mirror is open.</p>
     <button class="go" id="go">ENTER</button>
     <button class="lnk" id="reset" hidden>START OVER</button>
-    <div class="small">MOVE WITH THE STICK · TOUCH AND READ WITH A<br>PLAY WITH SOUND ON</div>
+    <div class="small">MOVE WITH THE STICK · TOUCH AND READ WITH A<br>STUCK? ASK THE DJINN<br>PLAY WITH SOUND ON</div>
   </div>
 
   <div class="ov" id="forge">
@@ -92,6 +99,7 @@ button:active{background:#b79cff;color:#07060c}
     <h2 id="etitle"></h2>
     <canvas id="ecv"></canvas>
     <div id="ehint"></div>
+    <button class="lnk" id="eask">ASK THE DJINN</button>
     <button class="go" id="eswap" style="margin-top:.5rem;padding:.6rem 1rem;font-size:.68rem"></button>
     <button class="lnk" id="eback">STEP BACK</button>
   </div>
@@ -374,7 +382,7 @@ function pointLit(k) { ST.done[k] = true; hud(); setDrone(); save(); }
 const tabHot = sc => (sc.tabs || []).map((tb, i) => ({ id: 'tab' + i, x: tb.x, y: tb.y + 4, r: 24 }));
 function readTab(tb) { if (ST.cur === 'her') return say([...tb.old.map(c => ({ c })), { m: tb.mark }]);
   const k = ST.f.listen ? 'tabHim2' : ST.f.tabHim ? 'tabHim1' : 'tabHim0'; ST.f.tabHim = 1; say(TX[k]); }
-function vanishCat(k, x, y) { if (ST.f[k] || mode !== 'play') return false; if (dist(pl.x, pl.y, x, y) < 48) { ST.f[k] = 1; burst(x, y - 8, SIL, 34); chime(8, .05); save(); return false; } return true; }
+function vanishCat(k, x, y) { if (ST.f[k] || mode !== 'play') return false; if (dist(pl.x, pl.y, x, y) < 48) { ST.f[k] = 1; burst(x, y - 8, SIL, 34); chime(8, .05); save(); setTimeout(() => { if (mode === 'play') say([D(ST.f.catW && ST.f.catM ? "That was a second cat. I'm keeping a list now. The list has two cats on it." : "Did you see... no. Never mind. Cat.")]); }, 400); return false; } return true; }
 
 const S = {
   room: {
@@ -407,7 +415,7 @@ const S = {
       if (id === 'desk') { if (ST.candle) return say(TX.candle2); return say(TX.candle, () => { ST.candle = true; burst(180, 86); chime(4); save(); }); }
       if (id === 'mirror') { if (!(ST.cape && ST.candle)) return say(TX.mirrorNo); return say(TX.mirrorYes, () => go('hub', 180, 250)); }
     },
-    enter() { if (!ST.seen.room) { ST.seen.room = 1; say(TX.roomEnter); } },
+    enter() { if (!ST.seen.room) { ST.seen.room = 1; say([...TX.roomEnter, ...DJ.hello]); } },
   },
 
   hub: {
@@ -443,7 +451,7 @@ const S = {
       if (id === 'tile') return say(who === 'her' ? TX.tileHer : TX.tileHim);
       if (id === 'sixth') return go('stars', 180, 296);
       go(id, 180, 296); },
-    enter(who) { if (who === 'her' && !ST.seen.hub) { ST.seen.hub = 1; return say([...TX.hubEnter, ...TX.arrive], () => { ST.him = true; hud(); burst(ST.ch.him.x, ST.ch.him.y - 16, SIL, 40); chime(1); save(); }); }
+    enter(who) { if (who === 'her' && !ST.seen.hub) { ST.seen.hub = 1; return say([...TX.hubEnter, ...TX.arrive, ...DJ.follow], () => { ST.him = true; hud(); burst(ST.ch.him.x, ST.ch.him.y - 16, SIL, 40); chime(1); save(); }); }
       if (who === 'him' && !ST.seen.hubHim) { ST.seen.hubHim = 1; say(TX.hubHim); } },
   },
 
@@ -472,10 +480,10 @@ const S = {
       if (ST.done.nine) return say(TX.nineAfter);
       if (!ST.f.nineOpen) return say(TX.capped);
       const i = +id.slice(1); if (i < nineCount) return;
-      if (i !== nineCount) { nineCount = 0; thud(); return say(TX.nineWrong); }
+      if (i !== nineCount) { nineCount = 0; thud(); dj.wrong++; return say(TX.nineWrong, () => { if (dj.wrong >= 2) { dj.wrong = 0; ask(true); } }); }
       nineCount++; chime(i); burst(B9[i][0], B9[i][1] - 10);
       if (nineCount === 9) { cine.lean = -5; setTimeout(() => cine.lean = 0, 1800); say(TX.nineDone, () => { ST.items.push('lir'); burst(C, C, SIL); pointLit('nine'); say(TX.point); }); } },
-    enter(who) { const k = 'nine' + who; if (!ST.seen[k]) { ST.seen[k] = 1; say(who === 'her' ? TX.nineEnter : TX.nineHim); } },
+    enter(who) { const k = 'nine' + who; if (!ST.seen[k]) { ST.seen[k] = 1; say([...(who === 'her' ? TX.nineEnter : TX.nineHim), ...(ST.seen.djnine ? [] : (ST.seen.djnine = 1, [D(DJ.room.nine)]))]); } },
   },
 
   enn: {
@@ -493,7 +501,7 @@ const S = {
     use(id, who) { if (id === 'exit') return go('hub', ...pol(126, RR - 52));
       if (ST.done.enn) { if (who === 'her' && ST.f.scales) return say(TX.scales, () => { ST.f.scales = 0; ST.items.push('terazi'); burst(C, C - 10, SIL); chime(6); save(); }); return say(TX.ennAfter); }
       openEnn(); },
-    enter(who) { if (ST.done.enn) chant(4, .03); const k = 'enn' + who; if (!ST.seen[k]) { ST.seen[k] = 1; say(who === 'her' ? TX.ennEnter : TX.ennHim); } },
+    enter(who) { if (ST.done.enn) chant(4, .03); const k = 'enn' + who; if (!ST.seen[k]) { ST.seen[k] = 1; say([...(who === 'her' ? TX.ennEnter : TX.ennHim), ...(ST.seen.djenn ? [] : (ST.seen.djenn = 1, [D(DJ.room.enn)]))]); } },
   },
 
   gal: {
@@ -515,10 +523,10 @@ const S = {
       if (ST.placed[id]) return say(TX.galFull);
       if (!ST.items.length) return say(TX.galEmpty);
       pick(TX.galAsk, [...ST.items.map(k => EMBNAME[k]), 'NOTHING'], n => { const k = ST.items[n]; if (!k) return;
-        if (k !== id) { thud(); return say(TX.galNo); }
+        if (k !== id) { thud(); dj.wrong++; return say(TX.galNo, () => { if (dj.wrong >= 2) { dj.wrong = 0; ask(true); } }); }
         ST.items.splice(n, 1); ST.placed[k] = 1; const a = ALC.find(x => x[1] === k)[2]; burst(...pol(a, RR - 16)); chime(Object.keys(ST.placed).length + 3); save();
         if (Object.keys(ST.placed).length === 3) say([...TX.galYes, ...TX.galDone], () => { pointLit('gal'); say(TX.point); }); else say(TX.galYes); }); },
-    enter(who) { const k = 'gal' + who; if (!ST.seen[k]) { ST.seen[k] = 1; say(who === 'her' ? TX.galEnter : TX.galHim); } },
+    enter(who) { const k = 'gal' + who; if (!ST.seen[k]) { ST.seen[k] = 1; say([...(who === 'her' ? TX.galEnter : TX.galHim), ...(ST.seen.djgal ? [] : (ST.seen.djgal = 1, [D(DJ.room.gal)]))]); } },
   },
 
   stars: {
@@ -532,7 +540,7 @@ const S = {
     hot: () => [EXIT],
     lights: () => [[C, 150, 230]],
     use(id) { if (id === 'exit') return go('hub', ...pol(90, RR - 52)); },
-    enter(who) { ST.f.stars = 1; const k = 'stars' + who; if (!ST.seen[k]) { ST.seen[k] = 1; say(who === 'him' ? TX.starsHim : [...TX.starsHer, ...(ST.sig.moon && ST.sig.earth ? TX.starsBoth : TX.starsNone)]); } save(); },
+    enter(who) { ST.f.stars = 1; const k = 'stars' + who; if (!ST.seen[k]) { ST.seen[k] = 1; say([...(who === 'him' ? TX.starsHim : [...TX.starsHer, ...(ST.sig.moon && ST.sig.earth ? TX.starsBoth : TX.starsNone)]), ...(ST.seen.djstars ? [] : (ST.seen.djstars = 1, [D(DJ.room.stars)]))]); } save(); },
   },
 
   fin: {
@@ -555,7 +563,7 @@ const S = {
       if (id === 'mark') { if (!(ST.off.her && ST.off.him)) return say(TX.markNoOffer); pl.x = MARK[who][0]; pl.y = MARK[who][1]; pl.dir = 'u';
         const o = other(), ow = who === 'her' ? 'him' : 'her'; if (o.scene !== 'fin' || dist(o.x, o.y, MARK[ow][0], MARK[ow][1]) > 10) return say(TX.markWait);
         o.dir = 'u'; say(TX.rite, finish); } },
-    enter(who) { chant(2, .03); const k = 'fin' + who; if (!ST.seen[k]) { ST.seen[k] = 1; say(who === 'her' ? TX.finEnter : TX.finHim); } },
+    enter(who) { chant(2, .03); const k = 'fin' + who; if (!ST.seen[k]) { ST.seen[k] = 1; say([...(who === 'her' ? TX.finEnter : TX.finHim), ...(ST.seen.djfin ? [] : (ST.seen.djfin = 1, [D(DJ.room.fin)]))]); } },
   },
 };
 function forgeScene(who) { const moon = who === 'moon', a = moon ? 198 : -18; return {
@@ -582,7 +590,7 @@ function forgeScene(who) { const moon = who === 'moon', a = moon ? 198 : -18; re
     if (w === 'him') return say(TX.coldPieces);
     if (!moon && !ST.f.bellows) return say(TX.forgeCold);
     if (ST.sig[who]) return say(TX.reforge, () => openForge(who)); openForge(who); },
-  enter(w) { const k = who + w; if (!ST.seen[k]) { ST.seen[k] = 1; say(TX[who + (w === 'her' ? 'Enter' : 'Him')]); } },
+  enter(w) { const k = who + w; if (!ST.seen[k]) { ST.seen[k] = 1; say([...TX[who + (w === 'her' ? 'Enter' : 'Him')], ...(ST.seen['dj' + who] ? [] : (ST.seen['dj' + who] = 1, [D(DJ.room[who])]))]); } },
 }; }
 S.moon = forgeScene('moon'); S.earth = forgeScene('earth');
 
@@ -678,9 +686,9 @@ let mode = 'intro', queue = [], after = null, typing = null, full = '';
 function say(lines, cb) { queue = lines.slice(); after = cb || null; mode = 'dialog'; hintId = null; padOff(); next(); }
 function next() { const l = queue.shift();
   if (l === undefined) { $('#txt').textContent = ''; $('#more').style.visibility = 'hidden'; mode = 'play'; const cb = after; after = null; if (cb) cb(); return; }
-  const o = typeof l === 'string' ? { l } : l; if (o.fx) FX[o.fx](); const text = o.c || o.m || o.l, el = $('#txt'); el.className = o.c ? 'carve' : o.m ? 'mark' : ST.cur === 'him' ? 'him' : ''; el.textContent = ''; $('#more').style.visibility = 'hidden';
+  const o = typeof l === 'string' ? { l } : l; if (o.fx) FX[o.fx](); const text = o.c || o.m || o.d || o.l, el = $('#txt'); el.className = o.c ? 'carve' : o.m ? 'mark' : o.d ? 'djinn' : ST.cur === 'him' ? 'him' : ''; el.textContent = ''; $('#more').style.visibility = 'hidden';
   const chars = Array.from(text); full = text; let i = 0;
-  typing = setInterval(() => { el.textContent += chars[i]; if (i % 3 === 0 && chars[i] !== ' ') tone(o.c ? 220 : ST.cur === 'him' ? 262 : 330, .05, .012); i++; if (i >= chars.length) done(); }, o.c ? 46 : 26); }
+  typing = setInterval(() => { el.textContent += chars[i]; if (i % 3 === 0 && chars[i] !== ' ') o.d ? tone(660 + (i * 37) % 180, .04, .014, 'triangle') : tone(o.c ? 220 : ST.cur === 'him' ? 262 : 330, .05, .012); i++; if (i >= chars.length) done(); }, o.c ? 46 : 26); }
 function done() { clearInterval(typing); typing = null; $('#txt').textContent = full; $('#more').style.visibility = 'visible'; }
 function pick(q, labels, cb) { mode = 'choice'; hintId = null; $('#txt').className = ''; $('#txt').textContent = q; const ch = $('#choice'); ch.style.display = 'grid'; ch.innerHTML = '';
   labels.forEach((label, n) => { const b = document.createElement('button'); b.textContent = label; b.onclick = () => { ch.style.display = 'none'; $('#txt').textContent = ''; mode = 'play'; cb(n); }; ch.append(b); }); }
@@ -692,6 +700,81 @@ const LABEL = { window: 'the window', mirror: 'the mirror', desk: 'the desk', wa
 let hintId = null;
 function hint(h) { const id = h ? h.id : ''; if (id === hintId) return; hintId = id; const el = $('#txt'); if (!h) { if (el.className === 'hint') { el.textContent = ''; el.className = ''; } return; }
   const name = id.startsWith('tab') ? 'a carving' : id.startsWith('b') && id.length === 2 ? 'a bowl' : LABEL[id] || ''; el.className = 'hint'; el.innerHTML = '<b>A</b>' + name; }
+
+
+/* ================= the djinn (guide) ================= */
+const D = x => ({ d: x });
+const DJ = {
+  hello: [D("Hi. I'm in the mirror. It's me. The cookie one."), D("If you get stuck, press ASK. Or just stand there looking lost. I'll notice. I notice everything. It's exhausting.")],
+  follow: [D("I followed you in. Technically you left the door open, so technically this is allowed."), D("I've counted the doors. Five. I counted three times. Still five."), D("He can't see me, by the way. He thinks I'm a draught.")],
+  hisTurn: D("This one is his job, not yours. Press PLAY AS HIM. I'll wait. I'm very good at waiting. I lived in a mirror."),
+  herTurn: D("This one is hers. Press PLAY AS HER. He'd only stare at it and count things."),
+  elsewhere: D("It isn't in this room. Follow the light. I'll go and float at the right door."),
+  none: [D("There's nothing left to solve. I checked. Then I checked that I'd checked.")],
+  extra: [D("Unrelated to the plot: I've found two lamps, two floor plates and two cats that shouldn't be in here."), D("I'm not telling you where. ...Fine. The plates are upstairs and they want one of you each. At the same time.")],
+  room: { nine: "Nine bowls. I like nine. It's three threes.", gal: "I don't have a name on a wall. It's fine. I'm fine.", enn: "Nobody knows what language those words are. I respect a thing that refuses to be classified.",
+    moon: "Thirteen pieces. I sorted them by shape in my head. Then by vibe.", earth: "Ten pieces in here. Thirteen in the other forge. I've decided not to be upset about the asymmetry.",
+    stars: "Oh. I don't have a comment. That's new.", fin: "I'm going to be quiet in here. Starting now." },
+};
+const turnsLeft = () => eoff.map(o => (6 - o) % 6);
+function curStep() {
+  const H = 'her', M = 'him', f = ST.f, hs = ST.ch.her.scene, ms = ST.ch.him.scene;
+  if (!ST.cape) return { k: 'cape', who: H, sc: 'room', id: 'wardrobe', h: ["You're about to walk into a temple in pyjamas. I'm not judging. I'm noting it.", "The wardrobe. Right wall. At the back there is exactly one cloak."] };
+  if (!ST.candle) return { k: 'candle', who: H, sc: 'room', id: 'desk', h: ["It's dark in there. I checked. I can't check very well, I'm a reflection.", "The desk has a candle on it. Candles are for this."] };
+  if (!ST.seen.hub) return { k: 'mirror', who: H, sc: 'room', id: 'mirror', h: ["You have a cloak and a light. That's the whole list. The list had two items.", "Walk into me. Top right. It's fine. It only feels rude."] };
+  if (!f.nineOpen) return { k: 'nineOpen', who: M, sc: 'nine', id: 'stone', h: ["The nine bowls are capped. She can read why. He can see how. Annoying design. Hers, actually.", "Send him into the Hall of Nine. It's the door with nine dots. I counted them. Nine.", "Him. Centre stone. Press A. That's the entire trick."] };
+  if (!ST.done.nine) return { k: 'nine', who: H, sc: 'nine', id: 'b' + nineCount, h: ["The centre stone tells you the order. I read it. I read everything. It's a problem.", "West is left. 'Against the sun' is counter-clockwise. The word for it is widdershins. Great word. I think about it a lot.", "Start at the far-left bowl, then go down and around. I'll hover over the next one. Follow me."] };
+  if (!ST.done.moon) return { k: 'moon', who: H, sc: 'moon', id: 'anvil', h: ["The Moon Forge wants a seal. Yours. There is no wrong answer. This is distressing to me but it's true.", "Door with the crescent. Then the anvil. Three pieces minimum. I'd use all thirteen, but I'm like that."] };
+  if (!ST.has.cup) return { k: 'cup', who: H, sc: 'moon', id: 'cup', h: ["There's a cup in the Moon Forge that has been catching moonlight for hours. Somebody should take it. You. I mean you.", "Moon Forge, right-hand ledge. Silver cup. It has the moon in it. Literally. I looked."] };
+  if (!f.bellows) return { k: 'bellows', who: M, sc: 'earth', id: 'wheel', h: ["The Earth Forge has never been lit. That bothers me. A forge has one job.", "There's a wheel in the wall in there. She can't see it. He can. Send him through the door with the triangle.", "Him. Earth Forge. Right-hand wall. Wheel. A."] };
+  if (!ST.has.soil) return { k: 'soil', who: M, sc: 'earth', id: 'soil', h: ["He should take some of the earth from the bowl. It's his name. I checked: Toprak means earth. I like it when things are consistent.", "Earth Forge, left side. Stone bowl. Him, not you. You'll get a polite refusal."] };
+  if (!ST.done.earth) return { k: 'earth', who: H, sc: 'earth', id: 'anvil', h: ["His seal. You make it. He can't: the pieces don't move for him. I watched him try. It was a little sad.", "Door with the triangle. Anvil. Three pieces minimum. Glasses are available. I'm just saying."] };
+  if (!ST.done.enn) { if (hs !== 'enn') return { k: 'ennHer', who: H, sc: 'enn', id: null, h: ["Four rings. She can read them and can't turn them. He can turn them and can't read them. I think this room is about something.", "You both have to be standing in the ring room. Door with four circles. You first."] };
+    if (ms !== 'enn') return { k: 'ennHim', who: M, sc: 'enn', id: null, h: ["She's in the ring room. Now him. Same door: four circles.", "Bring him into the ring room too. Both of you, one room. I know. Logistics."] };
+    return { k: 'enn', who: M, sc: 'enn', id: 'rings', h: ["Open the rings. Under them there's a button that swaps her eyes for his hands. Look with hers. Turn with his.", "Each word has to sit on the line marked WEST. With her eyes, see which ones are off. With his hands, tap that ring until it's home.",
+      () => "Turns still needed, outer ring to inner: " + turnsLeft().join(", ") + ". Yes, I counted. It's what I do instead of sleeping."] }; }
+  if (f.scales) return { k: 'scales', who: H, sc: 'enn', id: 'rings', h: ["The scales in the middle of the rings are for you. He left them there. He's like that.", "Her. Centre of the rings. A."] };
+  if (!ST.done.gal) return { k: 'gal', who: H, sc: 'gal', id: ALC.find(a => !ST.placed[a[1]])[1], h: ["Three alcoves, three things in your pockets. It's a matching exercise. I love a matching exercise.", "Isis is written with a throne. Apollo plays the lyre. Nemesis weighs things.", "Throne on the left. Lyre in the middle. Scales on the right. Sorry. I couldn't hold it in."] };
+  if (!ST.seen.finher) return { k: 'down', who: H, sc: 'fin', id: null, h: ["Five points lit. The seal is open. Go down. I'll be behind you. Slightly to the left.", "The seal. Middle of the star, upstairs. Stand on it and press A."] };
+  if (!f.listen) return { k: 'listen', who: M, sc: 'hub', id: 'seal', h: f.noTrick ? ["There's no mechanism. I checked for him. Twice. He's going to hate this.", "He has to stop. Stand him on the seal and don't touch anything.", "On the seal. Thumb off the stick. Count to six. I'll count too. One."]
+      : ["Now him. Take him to the seal in the middle of the star.", "Him. The seal. Press A and see what it says to him."] };
+  if (!ST.off.her) return { k: 'altarHer', who: H, sc: 'fin', id: 'altar', h: ["The altar wants one thing from each of you. You're carrying yours. It's the cup.", "Her. Altar. Top of the circle. A."] };
+  if (!ST.off.him) return { k: 'altarHim', who: M, sc: 'fin', id: 'altar', h: ["His turn at the altar. He has a handful of earth and no idea what to do with it. Help him.", "Him. Altar. Top of the circle. A."] };
+  if (f.finished) return null;
+  const on = w => ST.ch[w].scene === 'fin' && dist(ST.ch[w].x, ST.ch[w].y, MARK[w][0], MARK[w][1]) < 10;
+  if (!on(H)) return { k: 'markHer', who: H, sc: 'fin', id: 'mark', h: ["Two marks in the floor. One each. Yours is the crescent.", "Stand her on the crescent and press A. Then him on the triangle. I'll stand back. This part isn't mine."] };
+  return { k: 'markHim', who: M, sc: 'fin', id: 'mark', h: ["She's on her mark. His is the triangle, right next to her.", "Him. The triangle. A. Then I stop talking. I promise."] };
+}
+function target(st) { if (!st) return null; if (st.who !== ST.cur) return ST.him ? { sw: true } : null;
+  let id = st.id; if (pl.scene !== st.sc) id = pl.scene === 'hub' ? (st.sc === 'fin' ? 'seal' : st.sc === 'stars' ? 'sixth' : st.sc) : pl.scene === 'room' ? 'mirror' : 'exit';
+  if (!id) return null; const h = hots().find(h => h.id === id); return h ? { x: h.x, y: h.y } : null; }
+const dj = { x: 250, y: 40, lv: {}, idle: 0, sig: '', beacon: false, tick: 0, wrong: 0 };
+function hintLines(st, lvl) { const out = []; if (ST.cur === 'him' && !ST.f.djHim) { ST.f.djHim = 1; out.push(D("He can hear me too, a bit. He's decided I'm the ventilation. Fine.")); }
+  if (st.who !== ST.cur) { const k = 'djT' + st.who, first = !ST.f[k]; ST.f[k] = 1; out.push(first ? (st.who === 'him' ? DJ.hisTurn : DJ.herTurn) : D(st.who === 'him' ? "His, not yours. PLAY AS HIM." : "Hers, not his. PLAY AS HER.")); }
+  const h = st.h[Math.min(lvl, st.h.length) - 1]; out.push(D(typeof h === 'function' ? h() : h));
+  if (st.who === ST.cur && pl.scene !== st.sc && lvl >= 2) out.push(DJ.elsewhere); return out; }
+function ask(auto) { if (mode !== 'play') return; const st = curStep(); if (!st) return auto ? null : say(DJ.none);
+  const lvl = Math.min(3, (dj.lv[st.k] || 0) + 1); if (auto && lvl <= (dj.lv[st.k] || 0)) return; dj.lv[st.k] = lvl; dj.beacon = true; dj.idle = 0;
+  const lines = hintLines(st, lvl); if (!auto && nDone() === 5 && !ST.f.djExtra && !(ST.f.sixth && ST.f.lampB)) { ST.f.djExtra = 1; lines.push(...DJ.extra); } say(lines); }
+function guideTick(dt) { if (mode !== 'play') return; dj.idle += dt; dj.tick += dt;
+  if (dj.tick > 1000) { dj.tick = 0; const sig = JSON.stringify([ST.cape, ST.candle, ST.done, ST.f, ST.has, ST.off, ST.items, ST.placed, Object.keys(ST.sig), nineCount, eoff]);
+    if (sig !== dj.sig) { dj.sig = sig; dj.idle = 0; dj.beacon = false; } }
+  const st = curStep(); if (!st) return; if (st.k !== dj.wk) { dj.wk = st.k; dj.wrong = 0; } const lv = dj.lv[st.k] || 0, fast = st.k === 'listen' && ST.f.noTrick ? .45 : 1;
+  if (dj.idle > 22000 * fast) dj.beacon = true;
+  if ((lv < 1 && dj.idle > 40000 * fast) || (lv < 2 && dj.idle > 85000 * fast) || (lv < 3 && dj.idle > 135000 * fast)) { if (!(st.k === 'listen' && stillT > 0)) ask(true); } }
+function drawDjinn(c, t) { const inMirror = pl.scene === 'room', tg = dj.beacon ? target(curStep()) : null;
+  let tx = pl.x - 22, ty = pl.y - 40; if (inMirror) { tx = 250; ty = 40; } else if (tg && tg.x) { tx = tg.x; ty = tg.y - 30; }
+  if (dist(dj.x, dj.y, tx, ty) > 400) { dj.x = tx; dj.y = ty; } dj.x += (tx - dj.x) * .06; dj.y += (ty - dj.y) * .06;
+  const b = Math.sin(t / 400) * 2; c.save(); c.translate(dj.x, dj.y + b); c.shadowColor = VIO; c.shadowBlur = 14; c.fillStyle = '#b79cff'; c.globalAlpha = .88;
+  c.beginPath(); c.moveTo(-7, 2); c.bezierCurveTo(-9, -11, 9, -11, 7, 2); c.quadraticCurveTo(6, 9, 2 + Math.sin(t / 300) * 2, 12); c.quadraticCurveTo(0, 8, -3, 10 + Math.sin(t / 260)); c.quadraticCurveTo(-7, 8, -7, 2); c.fill();
+  c.shadowBlur = 0; c.globalAlpha = 1; c.fillStyle = '#fff'; c.fillRect(-4.2, -3.5, 2.6, 3); c.fillRect(1.6, -3.5, 2.6, 3); c.fillStyle = BG; const lk = tg && tg.x ? 0 : Math.sin(t / 1700) > .6 ? .8 : 0; c.fillRect(-3.4 + lk, -2.4, 1.2, 1.5); c.fillRect(2.4 + lk, -2.4, 1.2, 1.5); c.restore();
+  if (tg && tg.x) { c.save(); c.strokeStyle = '#fff'; c.shadowColor = '#fff'; c.shadowBlur = 12; c.lineWidth = 1.3; const k = (t / 900) % 1; c.globalAlpha = 1 - k; c.beginPath(); c.ellipse(tg.x, tg.y, 6 + k * 16, (6 + k * 16) * .5, 0, 0, TAU); c.stroke();
+    c.fillStyle = '#fff'; for (let i = 0; i < 7; i++) { const q = (t / 1300 + i / 7) % 1; c.globalAlpha = (1 - q) * .8; c.fillRect(tg.x - 7 + hsh(i, 4) * 14, tg.y - q * 30, 1.5, 1.5); } c.restore(); }
+  $('#sw').classList.toggle('pulse', !!(tg && tg.sw)); return tg; }
+$('#ask').addEventListener('pointerdown', e => { e.preventDefault(); ask(false); });
+$('#eask').onclick = () => { const k = Math.min(3, (dj.lv.enn || 0) + 1); dj.lv.enn = k; const both = ST.him && other().scene === 'enn';
+  $('#ehint').textContent = 'THE DJINN: ' + (!both ? "It takes both of you in this room. One reads, one turns. Go and fetch the other one." : k === 1 ? "Look with her eyes. Turn with his hands. The button below swaps them."
+    : k === 2 ? "Every word has to sit on the line marked WEST. A ring moves one step per tap." : "Turns still needed, outer to inner: " + turnsLeft().join(", ") + ". Yes, I counted."); };
 
 /* ================= scene switching ================= */
 const cache = {}; let trans = null;
@@ -742,9 +825,10 @@ function frame(t) {
   if (h) { g.save(); g.strokeStyle = ST.cur === 'her' ? LAV : SIL; g.globalAlpha = .5 + .3 * Math.sin(t / 250); g.setLineDash([1, 5]); g.lineWidth = 1.4; g.beginPath(); g.arc(h.x, h.y, 13 + Math.sin(t / 400) * 2, 0, TAU); g.stroke(); g.restore(); }
   const whos = ['her', 'him'].filter(w => (w === 'her' || ST.him) && ST.ch[w].scene === pl.scene);
   whos.sort((a, b) => ST.ch[a].y - ST.ch[b].y).forEach(w => drawChar(g, w, t));
+  const tg = mode === 'end' ? null : drawDjinn(g, t);
   drawBursts(g, t);
   lg.globalCompositeOperation = 'source-over'; lg.clearRect(0, 0, L, L); lg.fillStyle = 'rgba(4,3,10,.9)'; lg.fillRect(0, 0, L, L); lg.globalCompositeOperation = 'destination-out';
-  const lights = sc.lights().filter(Boolean).concat(whos.map(w => [ST.ch[w].x, ST.ch[w].y - 14, w === 'him' ? 66 : ST.candle ? 86 + Math.sin(t / 130) * 3 : 46]));
+  const lights = sc.lights().filter(Boolean).concat([[dj.x, dj.y, 46]], tg && tg.x ? [[tg.x, tg.y - 8, 54]] : [], whos.map(w => [ST.ch[w].x, ST.ch[w].y - 14, w === 'him' ? 66 : ST.candle ? 86 + Math.sin(t / 130) * 3 : 46]));
   for (const [x, y, r] of lights) { const gr = lg.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(.55, 'rgba(0,0,0,.6)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); lg.fillStyle = gr; lg.beginPath(); lg.arc(x, y, r, 0, TAU); lg.fill(); }
   g.drawImage(lay, 0, 0, L, L);
   if (trans) { const p = (t - trans.t0) / 1300;
@@ -765,7 +849,7 @@ function loop(t) { const dt = Math.min(50, t - t0); t0 = t; moving = false;
     else if (dx && sc.ok(pl.x + dx, pl.y)) { pl.x += dx; moving = true; }
     else if (dy && sc.ok(pl.x, pl.y + dy)) { pl.y += dy; moving = true; }
     if (moving) { stepT += dt; if (stepT > 300) { stepT = 0; noise(.07, ST.cur === 'her' ? .018 : .026, ST.cur === 'her' ? -900 : -500); } } }
-  rules(dt);
+  rules(dt); guideTick(dt);
   if (mode !== 'end' && mode !== 'intro') frame(t); requestAnimationFrame(loop); }
 // the seal's "no trick" line arms the listening
 { const u = S.hub.use; S.hub.use = function (id, who) { if (id === 'seal' && who === 'him' && nDone() === 5 && !ST.f.listen) ST.f.noTrick = 1; return u.call(this, id, who); }; }
